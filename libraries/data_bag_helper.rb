@@ -3,7 +3,18 @@ require "chef/search/query"
 class NagiosDataBags
   attr_accessor :bag_list
 
-  def initialize(bag_list=Chef::DataBag.list)
+  def initialize(bag_list=nil)
+    if bag_list == nil
+      if Chef::Config[:solo]
+        unless File.directory?(Chef::Config[:data_bag_path])
+          raise Chef::Exceptions::InvalidDataBagPath, "Data bag path '#{Chef::Config[:data_bag_path]}' is invalid"
+        end
+
+        bag_list = Dir.glob(File.join(Chef::Config[:data_bag_path], "*")).map{|f|File.basename(f)}.sort
+      else
+        bag_list = Chef::DataBag.list
+      end
+    end
     @bag_list = bag_list
   end
 

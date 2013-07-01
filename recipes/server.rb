@@ -113,7 +113,7 @@ if nodes.empty?
 end
 
 # Sort by name to provide stable ordering
-nodes.sort! {|a,b| a.name <=> b.name }
+nodes.sort! {|a,b| a['name'] <=> b['name'] }
 
 # maps nodes into nagios hostgroups
 service_hosts= Hash.new
@@ -270,7 +270,7 @@ nagios_conf "contacts" do
 end
 
 nagios_conf "hostgroups" do
-  variables(:hostgroups => hostgroups,
+  variables(:hostgroups => hostgroups ? hostgroups : [],
             :search_hostgroups => hostgroup_list,
             :search_nodes => hostgroup_nodes)
 end
